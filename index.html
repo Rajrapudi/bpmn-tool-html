@@ -3,29 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My BPMN Diagram Tool</title>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <title>My BPMN Tool</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
         }
         
         .header {
@@ -36,167 +30,137 @@
         }
         
         .header h1 {
+            margin: 0;
             font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 300;
         }
         
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-        
-        .main-content {
+        .content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            height: 80vh;
+            min-height: 600px;
         }
         
         .input-section {
-            background: #f8f9fa;
             padding: 30px;
-            border-right: 2px solid #e9ecef;
+            background: #f8f9fa;
+            border-right: 2px solid #eee;
         }
         
         .output-section {
-            background: white;
             padding: 30px;
-            display: flex;
-            flex-direction: column;
+            background: white;
         }
         
         .section-title {
-            font-size: 1.4em;
+            font-size: 1.3em;
             margin-bottom: 20px;
-            color: #2d3748;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: #333;
+            font-weight: bold;
         }
         
-        .code-input {
+        textarea {
             width: 100%;
-            height: calc(100% - 120px);
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 20px;
+            height: 300px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             font-family: 'Courier New', monospace;
             font-size: 14px;
-            line-height: 1.5;
-            resize: none;
-            background: white;
-            transition: border-color 0.3s;
+            resize: vertical;
         }
         
-        .code-input:focus {
+        textarea:focus {
             outline: none;
             border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
         }
         
-        .generate-btn {
+        .btn {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
+            padding: 12px 25px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-top: 15px;
-            transition: all 0.3s;
+            font-size: 16px;
+            margin: 10px 5px 10px 0;
+            font-weight: bold;
         }
         
-        .generate-btn:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
-        }
-        
-        .diagram-container {
-            flex: 1;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 20px;
-            background: #fdfdfd;
-            overflow: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-        }
-        
-        .sample-codes {
-            background: #2d3748;
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        
-        .sample-codes h3 {
-            color: #4facfe;
-            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
         }
         
         .sample-btn {
-            background: #48bb78;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
+            background: #28a745;
+            padding: 8px 15px;
+            font-size: 14px;
             margin: 5px;
-            font-size: 12px;
         }
         
         .sample-btn:hover {
-            background: #38a169;
+            background: #218838;
+        }
+        
+        #diagram-output {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 400px;
+            background: #fdfdfd;
+            text-align: center;
+        }
+        
+        .sample-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 8px;
+        }
+        
+        .sample-section h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
         }
         
         .instructions {
-            background: #e6fffa;
-            border-left: 4px solid #38b2ac;
-            padding: 20px;
-            margin: 20px 30px;
-            border-radius: 0 10px 10px 0;
+            background: #d1ecf1;
+            border-left: 4px solid #bee5eb;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
         }
         
         .instructions h3 {
-            color: #234e52;
-            margin-bottom: 10px;
+            margin: 0 0 10px 0;
+            color: #0c5460;
         }
         
-        .instructions p {
-            color: #2c7a7b;
-            line-height: 1.6;
-        }
-        
-        #mermaid-output {
-            width: 100%;
-            height: 100%;
-        }
-        
-        .error-message {
-            color: #e53e3e;
-            background: #fed7d7;
-            padding: 15px;
-            border-radius: 8px;
+        .success-msg {
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
             margin: 10px 0;
         }
         
+        .error-msg {
+            color: #721c24;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
         @media (max-width: 768px) {
-            .main-content {
+            .content {
                 grid-template-columns: 1fr;
-                height: auto;
             }
-            
             .input-section {
                 border-right: none;
-                border-bottom: 2px solid #e9ecef;
-            }
-            
-            .code-input {
-                height: 300px;
+                border-bottom: 2px solid #eee;
             }
         }
     </style>
@@ -205,159 +169,165 @@
     <div class="container">
         <div class="header">
             <h1>🚀 My BPMN Diagram Tool</h1>
-            <p>Paste your code → Get your diagram instantly!</p>
+            <p>Simple code → Beautiful diagrams!</p>
         </div>
         
         <div class="instructions">
             <h3>📋 How to Use:</h3>
-            <p><strong>1.</strong> Paste your BPMN code in the left box &nbsp;→&nbsp; <strong>2.</strong> Click "Generate Diagram" &nbsp;→&nbsp; <strong>3.</strong> See your diagram on the right!</p>
+            <p><strong>1.</strong> Paste your flowchart code in the left box → <strong>2.</strong> Click "Generate Diagram" → <strong>3.</strong> See your diagram!</p>
         </div>
         
-        <div class="main-content">
+        <div class="content">
             <div class="input-section">
-                <div class="section-title">
-                    📝 Paste Your Code Here
-                </div>
-                <textarea id="code-input" class="code-input" placeholder="Paste your BPMN/Flowchart code here...">flowchart TD
-    A[📄 Document Submitted] --> B{📋 Initial Review}
-    B -->|✅ Complete| C[👤 Manager Review]
-    B -->|❌ Incomplete| D[📝 Request Changes]
-    D --> A
-    C --> E{💼 Manager Decision}
-    E -->|✅ Approved| F[✅ Document Approved]
-    E -->|❌ Rejected| G[❌ Document Rejected]
-    E -->|🔄 Needs Changes| D
-    F --> H[📧 Notify Stakeholders]
-    G --> I[📧 Send Rejection Notice]</textarea>
+                <div class="section-title">📝 Paste Your Code Here</div>
+                <textarea id="code-input" placeholder="Paste your flowchart code here...">flowchart TD
+    A[📄 Start Process] --> B{📋 Review Step}
+    B -->|✅ Approved| C[✅ Complete]
+    B -->|❌ Rejected| D[❌ End]
+    B -->|🔄 Revise| E[📝 Make Changes]
+    E --> A</textarea>
                 
-                <button class="generate-btn" onclick="generateDiagram()">🎯 Generate Diagram</button>
+                <button class="btn" onclick="generateDiagram()">🎯 Generate Diagram</button>
                 
-                <div class="sample-codes">
-                    <h3>📚 Quick Examples:</h3>
-                    <button class="sample-btn" onclick="loadSample('simple')">Simple Flow</button>
-                    <button class="sample-btn" onclick="loadSample('approval')">Approval Process</button>
-                    <button class="sample-btn" onclick="loadSample('decision')">Decision Tree</button>
-                    <button class="sample-btn" onclick="loadSample('loop')">Process Loop</button>
+                <div class="sample-section">
+                    <h4>📚 Try These Examples:</h4>
+                    <button class="btn sample-btn" onclick="loadExample('simple')">Simple Flow</button>
+                    <button class="btn sample-btn" onclick="loadExample('approval')">Approval Process</button>
+                    <button class="btn sample-btn" onclick="loadExample('decision')">Decision Tree</button>
                 </div>
             </div>
             
             <div class="output-section">
-                <div class="section-title">
-                    🎨 Your Diagram
-                </div>
-                <div class="diagram-container">
-                    <div id="mermaid-output">
-                        <div style="text-align: center; color: #718096; font-size: 18px;">
-                            👆 Paste your code and click "Generate Diagram" to see your BPMN here!
-                        </div>
-                    </div>
+                <div class="section-title">🎨 Your Diagram</div>
+                <div id="diagram-output">
+                    <p style="color: #666; font-size: 18px;">👈 Enter code and click "Generate Diagram" to see your flowchart here!</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Mermaid Library -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
     <script>
-        mermaid.initialize({ 
-            startOnLoad: false,
-            theme: 'base',
-            themeVariables: {
-                primaryColor: '#4facfe',
-                primaryTextColor: '#2d3748',
-                primaryBorderColor: '#4facfe',
-                lineColor: '#718096',
-                secondaryColor: '#e2e8f0',
-                tertiaryColor: '#f7fafc',
-                background: '#ffffff',
-                mainBkg: '#ffffff'
-            },
-            flowchart: {
-                curve: 'basis',
-                padding: 20
-            }
-        });
+        // Initialize Mermaid with better error handling
+        try {
+            mermaid.initialize({ 
+                startOnLoad: false,
+                theme: 'base',
+                themeVariables: {
+                    primaryColor: '#4facfe',
+                    primaryTextColor: '#333',
+                    primaryBorderColor: '#4facfe',
+                    lineColor: '#666',
+                    secondaryColor: '#e6f3ff',
+                    tertiaryColor: '#f0f8ff'
+                },
+                securityLevel: 'loose',
+                fontFamily: 'Arial, sans-serif'
+            });
+        } catch (error) {
+            console.log('Mermaid initialization error:', error);
+        }
         
-        const samples = {
+        // Sample code examples
+        const examples = {
             simple: `flowchart TD
-    A[Start] --> B[Process Step]
-    B --> C{Decision Point}
-    C -->|Yes| D[Action A]
-    C -->|No| E[Action B]
+    A[Start] --> B[Process]
+    B --> C{Decision}
+    C -->|Yes| D[Action 1]
+    C -->|No| E[Action 2]
     D --> F[End]
     E --> F`,
             
             approval: `flowchart TD
-    A[📄 Request Submitted] --> B{📋 Manager Review}
-    B -->|✅ Approved| C[✅ Process Request]
-    B -->|❌ Rejected| D[❌ Send Rejection]
-    B -->|🔄 Needs Info| E[📝 Request Details]
+    A[📄 Request] --> B{👤 Manager Review}
+    B -->|✅ Approved| C[✅ Process]
+    B -->|❌ Rejected| D[❌ Reject]
+    B -->|🔄 Revise| E[📝 Send Back]
     E --> A
-    C --> F[📧 Notify Completion]
-    D --> G[📧 Notify Rejection]`,
+    C --> F[📧 Notify]
+    D --> G[📧 Notify]`,
             
             decision: `flowchart TD
-    A[📊 Analyze Data] --> B{📈 Performance OK?}
-    B -->|✅ Good| C[📋 Standard Process]
-    B -->|⚠️ Needs Attention| D[🔍 Deep Analysis]
-    B -->|❌ Critical| E[🚨 Immediate Action]
-    D --> F{🎯 Root Cause Found?}
-    F -->|Yes| G[🔧 Fix Issue]
-    F -->|No| H[🔄 Continue Investigation]
-    H --> D
-    G --> I[✅ Monitor Results]`,
-            
-            loop: `flowchart TD
-    A[🚀 Start Process] --> B[📝 Collect Data]
-    B --> C[🔍 Process Data]
-    C --> D{✅ Quality Check}
-    D -->|✅ Pass| E[📊 Generate Report]
-    D -->|❌ Fail| F[🔄 Reprocess]
-    F --> B
-    E --> G{🔄 More Data?}
-    G -->|Yes| B
-    G -->|No| H[🏁 Complete]`
+    A[📊 Analyze] --> B{📈 Results OK?}
+    B -->|✅ Good| C[📋 Continue]
+    B -->|⚠️ Warning| D[🔍 Investigate]
+    B -->|❌ Bad| E[🚨 Alert]
+    D --> F{🎯 Fixed?}
+    F -->|Yes| C
+    F -->|No| E
+    C --> G[✅ Complete]`
         };
         
-        function loadSample(type) {
-            document.getElementById('code-input').value = samples[type];
+        function loadExample(type) {
+            const textarea = document.getElementById('code-input');
+            textarea.value = examples[type];
             generateDiagram();
         }
         
         function generateDiagram() {
             const code = document.getElementById('code-input').value.trim();
-            const outputDiv = document.getElementById('mermaid-output');
+            const output = document.getElementById('diagram-output');
             
             if (!code) {
-                outputDiv.innerHTML = '<div style="text-align: center; color: #e53e3e;">Please paste some code first!</div>';
+                output.innerHTML = '<div class="error-msg">Please enter some code first!</div>';
                 return;
             }
             
-            outputDiv.innerHTML = '';
+            // Clear previous content
+            output.innerHTML = '<p style="color: #666;">Generating diagram...</p>';
             
             try {
-                const diagramId = 'diagram-' + Date.now();
+                // Check if mermaid is loaded
+                if (typeof mermaid === 'undefined') {
+                    throw new Error('Mermaid library not loaded');
+                }
                 
-                mermaid.render(diagramId, code, (svgCode) => {
-                    outputDiv.innerHTML = svgCode;
-                }, outputDiv);
+                // Generate unique ID
+                const graphId = 'graph-' + Date.now();
+                
+                // Render the diagram
+                mermaid.render(graphId, code).then(function(result) {
+                    output.innerHTML = result.svg;
+                    
+                    // Add success message
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'success-msg';
+                    successMsg.innerHTML = '✅ Diagram generated successfully!';
+                    output.insertBefore(successMsg, output.firstChild);
+                    
+                }).catch(function(error) {
+                    console.error('Mermaid render error:', error);
+                    output.innerHTML = `
+                        <div class="error-msg">
+                            <strong>⚠️ Could not generate diagram</strong><br><br>
+                            Common fixes:<br>
+                            • Make sure your code starts with "flowchart TD"<br>
+                            • Check that arrows use --> format<br>
+                            • Ensure node names are unique<br><br>
+                            Try clicking one of the example buttons!
+                        </div>
+                    `;
+                });
                 
             } catch (error) {
-                outputDiv.innerHTML = `
-                    <div class="error-message">
-                        <strong>⚠️ Error:</strong> Could not generate diagram. 
-                        <br><br>
-                        <strong>Common fixes:</strong>
-                        <br>• Make sure your code starts with "flowchart TD"
-                        <br>• Check that all arrows use --> format
-                        <br>• Ensure all node names are unique
-                        <br><br>
-                        Try one of the sample codes to get started!
+                console.error('Generation error:', error);
+                output.innerHTML = `
+                    <div class="error-msg">
+                        <strong>⚠️ Error:</strong> ${error.message}<br><br>
+                        Try refreshing the page and using one of the example buttons.
                     </div>
                 `;
             }
         }
         
-        generateDiagram();
+        // Auto-generate initial diagram
+        window.addEventListener('load', function() {
+            setTimeout(generateDiagram, 1000);
+        });
         
+        // Keyboard shortcut
         document.getElementById('code-input').addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'Enter') {
                 generateDiagram();
